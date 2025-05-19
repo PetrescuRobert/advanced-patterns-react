@@ -1,14 +1,21 @@
-import { Experience } from "@advanced-react/server/database/schema";
 import Card from "@/features/shared/components/ui/Card.tsx";
+import { ExperienceForList } from "@/features/experiences/types.ts";
+import { LinkIcon, MessageSquare } from "lucide-react";
 
 type ExperienceCardProps = {
-  experience: Experience;
+  experience: ExperienceForList;
 };
 
 export function ExperienceCard({ experience }: ExperienceCardProps) {
   return (
     <Card className={"overflow-hidden p-0"}>
       <ExperienceCardMedia experience={experience} />
+      <div className={"w-full space-y-4 p-4"}>
+        <ExperienceCardHeader experience={experience} />
+        <ExperienceCardContent experience={experience} />
+        <ExperienceCardMeta experience={experience} />
+        <ExperienceCardMetricButtons experience={experience} />
+      </div>
     </Card>
   );
 }
@@ -27,6 +34,71 @@ function ExperienceCardMedia({ experience }: ExperienceCardMediaProps) {
         alt={experience.title}
         className={"h-full w-full object-cover"}
       />
+    </div>
+  );
+}
+
+type ExperienceCardHeaderProps = Pick<ExperienceCardProps, "experience">;
+
+function ExperienceCardHeader({ experience }: ExperienceCardHeaderProps) {
+  return (
+    <div>
+      <div>{experience.user.name}</div>
+      <h2
+        className={"text-secondary-500 dark:text-primary-500 text-xl font-bold"}
+      >
+        {experience.title}
+      </h2>
+    </div>
+  );
+}
+
+type ExperienceCardContentProps = Pick<ExperienceCardProps, "experience">;
+
+function ExperienceCardContent({ experience }: ExperienceCardContentProps) {
+  return <p>{experience.content}</p>;
+}
+
+type ExperienceCardMetaProps = Pick<ExperienceCardProps, "experience">;
+
+function ExperienceCardMeta({ experience }: ExperienceCardMetaProps) {
+  return (
+    <div
+      className={
+        "flex items-center gap-4 text-neutral-600 dark:text-neutral-400"
+      }
+    >
+      <time>{new Date(experience.scheduledAt).toLocaleString()}</time>
+      {experience.url && (
+        <div className={"flex items-center gap-2"}>
+          <LinkIcon
+            size={16}
+            className={"text-secondary-500 dark:text-primary-500"}
+          />
+          <a
+            href={experience.url}
+            target={"_blank"}
+            className={
+              "text-secondary-500 dark:text-primary-500 hover:underline"
+            }
+          >
+            Event Details
+          </a>
+        </div>
+      )}
+    </div>
+  );
+}
+
+type ExperienceCardMetricButtonsProps = Pick<ExperienceCardProps, "experience">;
+
+function ExperienceCardMetricButtons({
+  experience,
+}: ExperienceCardMetricButtonsProps) {
+  return (
+    <div className={"flex items-center gap-2"}>
+      <MessageSquare className={"h-5 w-5"} />
+      <span>{experience.commentsCount}</span>
     </div>
   );
 }

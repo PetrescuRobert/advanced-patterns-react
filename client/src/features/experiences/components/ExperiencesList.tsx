@@ -1,9 +1,9 @@
-import { Experience } from "@advanced-react/server/database/schema";
 import Spinner from "@/features/shared/components/ui/Spinner.tsx";
 import { ExperienceCard } from "@/features/experiences/components/ExperienceCard.tsx";
+import { ExperienceForList } from "@/features/experiences/types.ts";
 
 type ExperiencesListProps = {
-  experiences: Experience[];
+  experiences: ExperienceForList[];
   isLoading?: boolean;
   noExperiencesMessage?: string;
 };
