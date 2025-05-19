@@ -6,6 +6,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { trpc } from "@/trpc.ts";
 import { httpBatchLink } from "@trpc/client";
 import { env } from "@/lib/utils/env.ts";
+import { ExperiencesList } from "@/features/experiences/components/ExperiencesList.tsx";
 
 export function App() {
   const [queryClient] = useState(() => new QueryClient());
@@ -38,9 +39,8 @@ export function App() {
                   </b>
                 </p>
               </header>
-              <div className="space-y-4 p-4">
-                <Index />
-              </div>
+
+              <Index />
             </div>
           </div>
         </ThemeProvider>
@@ -50,7 +50,12 @@ export function App() {
 }
 
 function Index() {
-  const { data } = trpc.experiences.byId.useQuery({ id: 1 });
+  const experiencesQuery = trpc.experiences.feed.useQuery({});
 
-  return <div>{data?.title}</div>;
+  return (
+    <ExperiencesList
+      experiences={experiencesQuery.data?.experiences ?? []}
+      isLoading={experiencesQuery.isLoading}
+    />
+  );
 }
