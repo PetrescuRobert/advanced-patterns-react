@@ -1,6 +1,7 @@
 import Card from "@/features/shared/components/ui/Card.tsx";
 import { ExperienceForList } from "@/features/experiences/types.ts";
 import { LinkIcon, MessageSquare } from "lucide-react";
+import CommentsSection from "@/features/comments/components/CommentsSection.tsx";
 
 type ExperienceCardProps = {
   experience: ExperienceForList;
@@ -15,6 +16,10 @@ export function ExperienceCard({ experience }: ExperienceCardProps) {
         <ExperienceCardContent experience={experience} />
         <ExperienceCardMeta experience={experience} />
         <ExperienceCardMetricButtons experience={experience} />
+        <CommentsSection
+          experienceId={experience.id}
+          commentsCount={experience.commentsCount}
+        />
       </div>
     </Card>
   );
