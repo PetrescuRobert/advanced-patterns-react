@@ -2,6 +2,7 @@ import Card from "@/features/shared/components/ui/Card.tsx";
 import { ExperienceForList } from "@/features/experiences/types.ts";
 import { LinkIcon, MessageSquare } from "lucide-react";
 import CommentsSection from "@/features/comments/components/CommentsSection.tsx";
+import CommentCreateForm from "@/features/comments/components/CommentCreateForm.tsx";
 
 type ExperienceCardProps = {
   experience: ExperienceForList;
@@ -16,6 +17,7 @@ export function ExperienceCard({ experience }: ExperienceCardProps) {
         <ExperienceCardContent experience={experience} />
         <ExperienceCardMeta experience={experience} />
         <ExperienceCardMetricButtons experience={experience} />
+        <CommentCreateForm experienceId={experience.id} />
         <CommentsSection
           experienceId={experience.id}
           commentsCount={experience.commentsCount}
