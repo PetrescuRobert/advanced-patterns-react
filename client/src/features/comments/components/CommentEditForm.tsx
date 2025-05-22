@@ -3,7 +3,7 @@ import { z } from "zod";
 import { Comment } from "@advanced-react/server/database/schema";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { trpc } from "@/trpc.ts";
+import { trpc } from "@/router.tsx";
 import {
   Form,
   FormControl,

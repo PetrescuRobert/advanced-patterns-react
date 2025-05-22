@@ -1,5 +1,5 @@
 import { Experience } from "@advanced-react/server/database/schema";
-import { trpc } from "@/trpc.ts";
+import { trpc } from "@/router.tsx";
 import CommentList from "@/features/comments/components/CommentList.tsx";
 
 type CommentsSectionProps = {
