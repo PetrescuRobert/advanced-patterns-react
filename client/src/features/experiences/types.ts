@@ -6,3 +6,6 @@ type ExperienceWithCommentsCount = Experience & { commentsCount: number };
 
 export type ExperienceForList = ExperienceWithUser &
   ExperienceWithCommentsCount;
+
+export type ExperienceForDetails = ExperienceWithUser &
+  ExperienceWithCommentsCount;
