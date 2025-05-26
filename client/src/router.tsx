@@ -5,6 +5,7 @@ import { env } from "@/lib/utils/env.ts";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { createRouter as createTanstackRouter } from "@tanstack/react-router";
 import { routeTree } from "@/routeTree.gen.ts";
+import Spinner from "@/features/shared/components/ui/Spinner.tsx";
 
 export const queryClient = new QueryClient();
 
@@ -31,6 +32,11 @@ function createRouter() {
     context: {
       trpcQueryUtils,
     },
+    defaultPendingComponent: () => (
+      <div className={"flex items-center justify-center"}>
+        <Spinner />
+      </div>
+    ),
     Wrap: function WrapComponent({ children }) {
       return (
         <trpc.Provider client={trpcClient} queryClient={queryClient}>

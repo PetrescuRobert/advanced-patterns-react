@@ -26,7 +26,7 @@ type CommentEditFormProps = {
 export default function CommentEditForm({
   comment,
   setIsEditing,
-}: CommentEditFormProps) {
+}: Readonly<CommentEditFormProps>) {
   const { toast } = useToast();
   const utils = trpc.useUtils();
 
