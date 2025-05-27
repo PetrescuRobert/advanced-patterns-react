@@ -2,6 +2,7 @@ import { Experience } from "@advanced-react/server/database/schema";
 import { trpc } from "@/router.tsx";
 import CommentList from "@/features/comments/components/CommentList.tsx";
 import CommentCreateForm from "@/features/comments/components/CommentCreateForm.tsx";
+import { ErrorComponent } from "@/features/shared/components/ErrorComponent.tsx";
 
 type CommentsSectionProps = {
   experienceId: Experience["id"];
@@ -20,7 +21,7 @@ export default function CommentsSection({
   );
 
   if (commentsQuery.error) {
-    return <div>Something went wrong!</div>;
+    return <ErrorComponent />;
   }
 
   return (
