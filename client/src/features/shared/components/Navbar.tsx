@@ -1,6 +1,6 @@
 import { ThemeToggle } from "@/features/shared/components/ThemeToggle.tsx";
 import Link from "@/features/shared/components/ui/Link.tsx";
-import { Home } from "lucide-react";
+import { Home, Search } from "lucide-react";
 
 export default function Navigation() {
   const navLinkClassName =
@@ -16,6 +16,15 @@ export default function Navigation() {
       >
         <Home className={"h-6 w-6"} />
         Home
+      </Link>
+      <Link
+        to={"/search"}
+        variant={"ghost"}
+        className={navLinkClassName}
+        activeProps={{ className: activeClassName }}
+      >
+        <Search className={"h-6 w-6"} />
+        Search
       </Link>
       <ThemeToggle />
     </nav>
