@@ -13,6 +13,7 @@ import {
 } from "@/features/shared/components/ui/Dialog.tsx";
 import { trpc } from "@/router.tsx";
 import { useToast } from "@/features/shared/hooks/useToast.ts";
+import UserAvatar from "@/features/users/components/UserAvatar.tsx";
 
 type CommentCardProps = {
   comment: CommentForList;
@@ -39,7 +40,7 @@ type CommentCardHeaderProps = Pick<CommentCardProps, "comment">;
 function CommentCardHeader({ comment }: CommentCardHeaderProps) {
   return (
     <div className={"flex items-center gap-2"}>
-      <div>{comment.user.name}</div>
+      <UserAvatar user={comment.user} />
       <time className={"text-sm text-neutral-500"}>
         - {new Date(comment.createdAt).toLocaleDateString()}
       </time>
