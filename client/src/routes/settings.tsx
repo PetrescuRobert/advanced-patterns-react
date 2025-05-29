@@ -5,6 +5,7 @@ import { useToast } from "@/features/shared/hooks/useToast.ts";
 import Card from "@/features/shared/components/ui/Card.tsx";
 import { useCurrentUser } from "@/features/auth/hooks/useCurrentUser.ts";
 import ChangeEmailDialog from "@/features/auth/components/ChangeEmailDialog.tsx";
+import ChangePasswordDialog from "@/features/auth/components/ChangePasswordDialog.tsx";
 
 export const Route = createFileRoute("/settings")({
   component: SettingsPage,
@@ -46,6 +47,10 @@ function SettingsPage() {
     {
       label: currentUser?.email,
       component: <ChangeEmailDialog />,
+    },
+    {
+      label: "Change password",
+      component: <ChangePasswordDialog />,
     },
     {
       label: "Sign out of your account",
