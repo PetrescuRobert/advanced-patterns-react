@@ -8,6 +8,8 @@ import { ExperiencesList } from "@/features/experiences/components/ExperiencesLi
 import { ErrorComponent } from "@/features/shared/components/ErrorComponent.tsx";
 import { MartiniIcon } from "lucide-react";
 import { UserForDetails } from "@/features/users/types.ts";
+import { useCurrentUser } from "@/features/auth/hooks/useCurrentUser.ts";
+import UserEditDialog from "@/features/users/components/UserEditDialog.tsx";
 
 export const Route = createFileRoute("/users/$userId")({
   component: UserPage,
@@ -53,6 +55,7 @@ function UserPage() {
         {user.bio && (
           <p className={"text-neutral-600 dark:text-neutral-400"}>{user.bio}</p>
         )}
+        <UserProfileButton user={user} />
       </Card>
 
       <UserProfileHostStats user={user} />
@@ -91,4 +94,19 @@ function UserProfileHostStats({ user }: UserProfileHostStatsProps) {
       </div>
     </Card>
   );
+}
+
+type UserProfileButtonProps = {
+  user: UserForDetails;
+};
+
+function UserProfileButton({ user }: UserProfileButtonProps) {
+  const { currentUser } = useCurrentUser();
+  const isCurrentUser = user.id === currentUser?.id;
+
+  if (isCurrentUser) {
+    return <UserEditDialog user={user} />;
+  }
+
+  return null;
 }

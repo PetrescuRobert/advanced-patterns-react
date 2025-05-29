@@ -29,6 +29,20 @@ export default function Navigation() {
         <Search className={"h-6 w-6"} />
         Search
       </Link>
+
+      {currentUser && (
+        <Link
+          to={"/users/$userId"}
+          params={{ userId: currentUser.id }}
+          variant={"ghost"}
+          className={navLinkClassName}
+          activeProps={{ className: activeClassName }}
+        >
+          <User className={"h-6 w-6"} />
+          Profile
+        </Link>
+      )}
+
       {currentUser ? (
         <Link
           to={"/settings"}

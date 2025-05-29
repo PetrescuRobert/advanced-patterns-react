@@ -2,11 +2,14 @@ import {
   createTRPCQueryUtils,
   createTRPCReact,
   getQueryKey,
+  httpLink,
+  httpBatchLink,
   TRPCClientError,
   TRPCLink,
+  splitLink,
+  isNonJsonSerializable,
 } from "@trpc/react-query";
 import type { AppRouter } from "@advanced-react/server";
-import { httpBatchLink } from "@trpc/client";
 import { env } from "@/lib/utils/env.ts";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { createRouter as createTanstackRouter } from "@tanstack/react-router";
@@ -56,15 +59,30 @@ const customLink: TRPCLink<AppRouter> = () => {
 const trpcClient = trpc.createClient({
   links: [
     customLink,
-    httpBatchLink({
-      url: env.VITE_SERVER_BASE_URL,
-      fetch(url, options) {
-        return fetch(url, {
-          ...options,
-          credentials: "include",
-        });
+    splitLink({
+      condition(op) {
+        return isNonJsonSerializable(op.input);
       },
-      headers: getHeaders(),
+      true: httpLink({
+        url: env.VITE_SERVER_BASE_URL,
+        fetch(url, options) {
+          return fetch(url, {
+            ...options,
+            credentials: "include",
+          });
+        },
+        headers: getHeaders(),
+      }),
+      false: httpBatchLink({
+        url: env.VITE_SERVER_BASE_URL,
+        fetch(url, options) {
+          return fetch(url, {
+            ...options,
+            credentials: "include",
+          });
+        },
+        headers: getHeaders(),
+      }),
     }),
   ],
 });
