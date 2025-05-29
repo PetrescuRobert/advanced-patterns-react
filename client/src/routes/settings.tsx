@@ -3,6 +3,8 @@ import { Button } from "@/features/shared/components/ui/Button.tsx";
 import { router, trpc } from "@/router.tsx";
 import { useToast } from "@/features/shared/hooks/useToast.ts";
 import Card from "@/features/shared/components/ui/Card.tsx";
+import { useCurrentUser } from "@/features/auth/hooks/useCurrentUser.ts";
+import ChangeEmailDialog from "@/features/auth/components/ChangeEmailDialog.tsx";
 
 export const Route = createFileRoute("/settings")({
   component: SettingsPage,
@@ -18,6 +20,7 @@ export const Route = createFileRoute("/settings")({
 function SettingsPage() {
   const utils = trpc.useUtils();
   const { toast } = useToast();
+  const { currentUser } = useCurrentUser();
 
   const logOutMutation = trpc.auth.logout.useMutation({
     onSuccess: async () => {
@@ -41,6 +44,10 @@ function SettingsPage() {
 
   const settings = [
     {
+      label: currentUser?.email,
+      component: <ChangeEmailDialog />,
+    },
+    {
       label: "Sign out of your account",
       component: (
         <Button
@@ -53,7 +60,7 @@ function SettingsPage() {
       ),
     },
   ];
-  
+
   return (
     <main className={"space-y-4"}>
       {settings.map((setting) => (
