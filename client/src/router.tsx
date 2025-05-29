@@ -1,7 +1,9 @@
 import {
   createTRPCQueryUtils,
   createTRPCReact,
+  getQueryKey,
   TRPCClientError,
+  TRPCLink,
 } from "@trpc/react-query";
 import type { AppRouter } from "@advanced-react/server";
 import { httpBatchLink } from "@trpc/client";
@@ -12,15 +14,57 @@ import { routeTree } from "@/routeTree.gen.ts";
 import Spinner from "@/features/shared/components/ui/Spinner.tsx";
 import { ErrorComponent } from "@/features/shared/components/ErrorComponent.tsx";
 import { NotFoundComponent } from "@/features/shared/components/NotFoundComponent.tsx";
+import { observable } from "@trpc/server/observable";
 
 export const queryClient = new QueryClient();
 
+function getHeaders() {
+  const queryKey = getQueryKey(trpc.auth.currentUser);
+  const token = queryClient.getQueryData<{ accessToken: string }>(
+    queryKey,
+  )?.accessToken;
+
+  return {
+    Authorization: token ? `Bearer ${token}` : undefined,
+  };
+}
+
 export const trpc = createTRPCReact<AppRouter>();
+
+const customLink: TRPCLink<AppRouter> = () => {
+  return ({ next, op }) => {
+    return observable((observer) => {
+      const unsubscribe = next(op).subscribe({
+        next(value) {
+          observer.next(value);
+        },
+        error(error) {
+          if (error?.data?.code === "UNAUTHORIZED") {
+            router.navigate({ to: "/login" });
+          }
+          observer.error(error);
+        },
+        complete() {
+          observer.complete();
+        },
+      });
+      return unsubscribe;
+    });
+  };
+};
 
 const trpcClient = trpc.createClient({
   links: [
+    customLink,
     httpBatchLink({
       url: env.VITE_SERVER_BASE_URL,
+      fetch(url, options) {
+        return fetch(url, {
+          ...options,
+          credentials: "include",
+        });
+      },
+      headers: getHeaders(),
     }),
   ],
 });
