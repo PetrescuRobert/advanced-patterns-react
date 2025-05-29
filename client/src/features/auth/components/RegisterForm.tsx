@@ -1,7 +1,4 @@
-import { z } from "zod";
 import { userCredentialsSchema } from "@advanced-react/shared/schema/auth";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
 import {
   Form,
   FormControl,
@@ -12,42 +9,44 @@ import {
 } from "@/features/shared/components/ui/Form.tsx";
 import Input from "@/features/shared/components/ui/Input.tsx";
 import { Button } from "@/features/shared/components/ui/Button.tsx";
-import { router, trpc } from "@/router.tsx";
 import { useToast } from "@/features/shared/hooks/useToast.ts";
-import Link from "@/features/shared/components/ui/Link";
+import { router, trpc } from "@/router.tsx";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
+import Link from "@/features/shared/components/ui/Link.tsx";
 
-const loginCredentialSchema = userCredentialsSchema.omit({
-  name: true,
-});
+const registerCredentialSchema = userCredentialsSchema;
 
-type LoginFormData = z.infer<typeof loginCredentialSchema>;
+type RegisterFormData = z.infer<typeof registerCredentialSchema>;
 
-export function LoginForm() {
+export function RegisterForm() {
   const { toast } = useToast();
   const utils = trpc.useUtils();
 
-  const form = useForm<LoginFormData>({
-    resolver: zodResolver(loginCredentialSchema),
+  const form = useForm<RegisterFormData>({
+    resolver: zodResolver(registerCredentialSchema),
     defaultValues: {
+      name: "",
       email: "",
       password: "",
     },
   });
 
-  const loginMutation = trpc.auth.login.useMutation({
-    onSuccess: async ({ user }) => {
+  const registerMutation = trpc.auth.register.useMutation({
+    onSuccess: async () => {
       await utils.auth.currentUser.invalidate();
 
       router.navigate({ to: "/" });
 
       toast({
-        title: "Logged in successfully!",
-        description: `Welcome back, ${user.name}!`,
+        title: "Registered in successfully!",
+        description: "Registered in successfully!",
       });
     },
     onError: (error) => {
       toast({
-        title: "Failed to login",
+        title: "Failed to register",
         description: error.message,
         variant: "destructive",
       });
@@ -55,12 +54,26 @@ export function LoginForm() {
   });
 
   const handleSubmit = form.handleSubmit((data) => {
-    loginMutation.mutate(data);
+    registerMutation.mutate(data);
   });
 
   return (
     <Form {...form}>
       <form onSubmit={handleSubmit} className="space-y-4">
+        <FormField
+          name={"name"}
+          control={form.control}
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Email</FormLabel>
+              <FormControl>
+                <Input {...field} placeholder={"John Doe"} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
         <FormField
           name={"email"}
           control={form.control}
@@ -78,6 +91,7 @@ export function LoginForm() {
             </FormItem>
           )}
         />
+
         <FormField
           name={"password"}
           control={form.control}
@@ -94,14 +108,13 @@ export function LoginForm() {
         <Button
           type={"submit"}
           className={"w-full"}
-          disabled={loginMutation.isPending}
+          disabled={registerMutation.isPending}
         >
-          {loginMutation.isPending ? "Logging in..." : "Login"}
+          {registerMutation.isPending ? "Logging in..." : "Register"}
         </Button>
-
         <div className={"flex justify-center"}>
-          <Link to={"/register"} variant={"ghost"}>
-            Don't have an account? Register here
+          <Link to={"/login"} variant={"ghost"}>
+            Already have an account? Login here
           </Link>
         </div>
       </form>
