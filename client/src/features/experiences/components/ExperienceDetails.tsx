@@ -4,6 +4,8 @@ import { LinkIcon } from "lucide-react";
 import { useCurrentUser } from "@/features/auth/hooks/useCurrentUser.ts";
 import { Button } from "@/features/shared/components/ui/Button.tsx";
 import Link from "@/features/shared/components/ui/Link.tsx";
+import { router } from "@/router.tsx";
+import { ExperienceDeleteDialog } from "@/features/experiences/components/ExperienceDeleteDialog.tsx";
 
 type ExperienceDetailsProps = {
   experience: ExperienceForDetails;
@@ -119,6 +121,12 @@ function ExperienceCardOwnerButtons({
           Edit
         </Link>
       </Button>
+      <ExperienceDeleteDialog
+        experience={experience}
+        onSuccess={() => {
+          router.navigate({ to: "/" });
+        }}
+      />
     </div>
   );
 }
