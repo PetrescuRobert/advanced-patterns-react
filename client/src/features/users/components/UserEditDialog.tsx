@@ -25,6 +25,7 @@ import { TextArea } from "@/features/shared/components/ui/TextArea.tsx";
 import { useState } from "react";
 import { trpc } from "@/router.tsx";
 import { useToast } from "@/features/shared/hooks/useToast.ts";
+import FileInput from "@/features/shared/components/ui/FileInput.tsx";
 
 type UserFormData = z.infer<typeof userEditSchema>;
 
@@ -115,6 +116,25 @@ export default function UserEditDialog({ user }: UserEditDialogProps) {
                   <FormLabel>Bio</FormLabel>
                   <FormControl>
                     <TextArea {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="photo"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Image</FormLabel>
+                  <FormControl>
+                    <FileInput
+                      accept={"image/*"}
+                      onChange={(event) => {
+                        field.onChange(event.target?.files?.[0]);
+                      }}
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
