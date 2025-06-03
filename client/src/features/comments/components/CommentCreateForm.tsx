@@ -16,6 +16,7 @@ import { TextArea } from "@/features/shared/components/ui/TextArea.tsx";
 import { trpc } from "@/router.tsx";
 import { useToast } from "@/features/shared/hooks/useToast.ts";
 import { Button } from "@/features/shared/components/ui/Button.tsx";
+import { useCurrentUser } from "@/features/auth/hooks/useCurrentUser.ts";
 
 type CommentCreateFormProps = {
   experienceId: Experience["id"];
@@ -28,6 +29,8 @@ export default function CommentCreateForm({
 }: CommentCreateFormProps) {
   const { toast } = useToast();
   const utils = trpc.useUtils();
+
+  const { currentUser } = useCurrentUser();
 
   const form = useForm<CommentCreateFormData>({
     resolver: zodResolver(commentValidationSchema),
@@ -64,6 +67,14 @@ export default function CommentCreateForm({
       experienceId,
     });
   });
+
+  if (!currentUser) {
+    return (
+      <div className={"text-center text-neutral-500"}>
+        Please log in to add a comment.
+      </div>
+    );
+  }
 
   return (
     <Form {...form}>

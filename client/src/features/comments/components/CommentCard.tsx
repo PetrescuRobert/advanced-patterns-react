@@ -15,6 +15,7 @@ import { trpc } from "@/router.tsx";
 import { useToast } from "@/features/shared/hooks/useToast.ts";
 import UserAvatar from "@/features/users/components/UserAvatar.tsx";
 import Link from "@/features/shared/components/ui/Link.tsx";
+import { useCurrentUser } from "@/features/auth/hooks/useCurrentUser.ts";
 
 type CommentCardProps = {
   comment: CommentForList;
@@ -65,6 +66,8 @@ function CommentCardButtons({ setIsEditing, comment }: CommentCardButtonsProp) {
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState<boolean>(false);
   const utils = trpc.useUtils();
 
+  const { currentUser } = useCurrentUser();
+
   const { toast } = useToast();
 
   const deleteMutation = trpc.comments.delete.useMutation({
@@ -89,41 +92,52 @@ function CommentCardButtons({ setIsEditing, comment }: CommentCardButtonsProp) {
     },
   });
 
+  const isCommentOwner = comment.userId === currentUser?.id;
+  const isExperienceOwner = comment.experience.userId === currentUser?.id;
+
+  if (!isCommentOwner && !isExperienceOwner) {
+    return null;
+  }
+
   return (
     <div className={"flex gap-4"}>
-      <Button variant={"link"} onClick={() => setIsEditing(true)}>
-        Edit
-      </Button>
-      <Dialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
-        <DialogTrigger asChild>
-          <Button variant={"destructive-link"}>Delete</Button>
-        </DialogTrigger>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Delete Comment</DialogTitle>
-          </DialogHeader>
-          <p className={"text-neutral-600 dark:text-neutral-400"}>
-            Are you sure you want to delete this comment?
-          </p>
-          <DialogFooter>
-            <Button
-              variant={"link"}
-              onClick={() => setIsDeleteDialogOpen(false)}
-            >
-              Cancel
-            </Button>
-            <Button
-              variant={"destructive"}
-              onClick={() => {
-                deleteMutation.mutate({ id: comment.id });
-              }}
-              disabled={deleteMutation.isPending}
-            >
-              {deleteMutation.isPending ? "Deleting..." : "Delete"}
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+      {isCommentOwner && (
+        <Button variant={"link"} onClick={() => setIsEditing(true)}>
+          Edit
+        </Button>
+      )}
+      {(isCommentOwner || isExperienceOwner) && (
+        <Dialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
+          <DialogTrigger asChild>
+            <Button variant={"destructive-link"}>Delete</Button>
+          </DialogTrigger>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Delete Comment</DialogTitle>
+            </DialogHeader>
+            <p className={"text-neutral-600 dark:text-neutral-400"}>
+              Are you sure you want to delete this comment?
+            </p>
+            <DialogFooter>
+              <Button
+                variant={"link"}
+                onClick={() => setIsDeleteDialogOpen(false)}
+              >
+                Cancel
+              </Button>
+              <Button
+                variant={"destructive"}
+                onClick={() => {
+                  deleteMutation.mutate({ id: comment.id });
+                }}
+                disabled={deleteMutation.isPending}
+              >
+                {deleteMutation.isPending ? "Deleting..." : "Delete"}
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
+      )}
     </div>
   );
 }
