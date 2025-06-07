@@ -1,6 +1,6 @@
 import Card from "@/features/shared/components/ui/Card.tsx";
 import { ExperienceForList } from "@/features/experiences/types.ts";
-import { LinkIcon, MessageSquare } from "lucide-react";
+import { LinkIcon, MessageSquare, Users } from "lucide-react";
 import Link from "@/features/shared/components/ui/Link.tsx";
 import { Button } from "@/features/shared/components/ui/Button.tsx";
 import UserAvatar from "@/features/users/components/UserAvatar.tsx";
@@ -123,7 +123,17 @@ function ExperienceCardMetricButtons({
   experience,
 }: ExperienceCardMetricButtonsProps) {
   return (
-    <div className={"flex items-center gap-2"}>
+    <div className={"flex items-center gap-4"}>
+      <Button variant={"link"} asChild>
+        <Link
+          to={"/experiences/$experienceId/attendees"}
+          params={{ experienceId: experience.id }}
+          variant={"ghost"}
+        >
+          <Users className={"h-5 w-5"} />
+          <span>{experience.attendeesCount}</span>
+        </Link>
+      </Button>
       <Button variant={"link"} asChild>
         <Link
           to={"/experiences/$experienceId"}

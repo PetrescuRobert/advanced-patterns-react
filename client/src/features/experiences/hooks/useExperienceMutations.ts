@@ -1,7 +1,8 @@
 import { trpc } from "@/router.tsx";
 import { useToast } from "@/features/shared/hooks/useToast.ts";
-import { Experience } from "@advanced-react/server/database/schema";
+import { Experience, User } from "@advanced-react/server/database/schema";
 import { useParams, useSearch } from "@tanstack/react-router";
+import { useCurrentUser } from "@/features/auth/hooks/useCurrentUser.ts";
 
 type ExperienceMutationOptions = {
   edit?: {
@@ -17,6 +18,8 @@ export function useExperienceMutations(
 ) {
   const { toast } = useToast();
   const utils = trpc.useUtils();
+
+  const { currentUser } = useCurrentUser();
 
   const { userId: pathUserId } = useParams({ strict: false });
   const { q: pathQ } = useSearch({ strict: false });
@@ -68,12 +71,20 @@ export function useExperienceMutations(
 
   const attendMutation = trpc.experiences.attend.useMutation({
     onMutate: async ({ id }) => {
-      function updateExperience<T extends { isAttending: boolean }>(
-        oldData: T,
-      ) {
+      function updateExperience<
+        T extends {
+          isAttending: boolean;
+          attendeesCount: number;
+          attendees?: User[];
+        },
+      >(oldData: T) {
         return {
           ...oldData,
           isAttending: true,
+          attendeesCount: oldData.attendeesCount + 1,
+          ...(oldData.attendees && {
+            attendees: [currentUser, ...oldData.attendees],
+          }),
         };
       }
 
@@ -200,12 +211,22 @@ export function useExperienceMutations(
 
   const unattendMutation = trpc.experiences.unattend.useMutation({
     onMutate: async ({ id }) => {
-      function updateExperience<T extends { isAttending: boolean }>(
-        oldData: T,
-      ) {
+      function updateExperience<
+        T extends {
+          isAttending: boolean;
+          attendeesCount: number;
+          attendees?: User[];
+        },
+      >(oldData: T) {
         return {
           ...oldData,
           isAttending: false,
+          attendeesCount: Math.max(0, oldData.attendeesCount - 1),
+          ...(oldData.attendees && {
+            attendees: oldData.attendees.filter(
+              (attendee) => attendee.id !== currentUser?.id,
+            ),
+          }),
         };
       }
 
