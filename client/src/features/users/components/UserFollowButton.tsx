@@ -3,6 +3,7 @@ import { Button } from "@/features/shared/components/ui/Button.tsx";
 import { trpc } from "@/router.tsx";
 import { useToast } from "@/features/shared/hooks/useToast.ts";
 import { useParams } from "@tanstack/react-router";
+import { useCurrentUser } from "@/features/auth/hooks/useCurrentUser.ts";
 
 type UserFollowButtonProps = {
   targetUserId: User["id"];
@@ -13,6 +14,7 @@ export function UserFollowButton({
   targetUserId,
   isFollowing,
 }: UserFollowButtonProps) {
+  const { currentUser } = useCurrentUser();
   const { toast } = useToast();
   const utils = trpc.useUtils();
 
@@ -312,6 +314,10 @@ export function UserFollowButton({
       });
     },
   });
+
+  if (!currentUser || currentUser.id === targetUserId) {
+    return null;
+  }
 
   return (
     <Button
