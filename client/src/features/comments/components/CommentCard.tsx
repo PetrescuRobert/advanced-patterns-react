@@ -1,5 +1,8 @@
 import Card from "@/features/shared/components/ui/Card.tsx";
-import { CommentForList } from "@/features/comments/types.ts";
+import {
+  CommentForList,
+  CommentOptimistic,
+} from "@/features/comments/types.ts";
 import { useState } from "react";
 import CommentEditForm from "@/features/comments/components/CommentEditForm.tsx";
 import { Button } from "@/features/shared/components/ui/Button.tsx";
@@ -102,14 +105,23 @@ function CommentCardButtons({ setIsEditing, comment }: CommentCardButtonsProp) {
   return (
     <div className={"flex gap-4"}>
       {isCommentOwner && (
-        <Button variant={"link"} onClick={() => setIsEditing(true)}>
+        <Button
+          variant={"link"}
+          onClick={() => setIsEditing(true)}
+          disabled={(comment as CommentOptimistic).__optimistic}
+        >
           Edit
         </Button>
       )}
       {(isCommentOwner || isExperienceOwner) && (
         <Dialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
           <DialogTrigger asChild>
-            <Button variant={"destructive-link"}>Delete</Button>
+            <Button
+              variant={"destructive-link"}
+              disabled={(comment as CommentOptimistic).__optimistic}
+            >
+              Delete
+            </Button>
           </DialogTrigger>
           <DialogContent>
             <DialogHeader>
