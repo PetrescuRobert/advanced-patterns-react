@@ -11,6 +11,7 @@ import { UserForDetails } from "@/features/users/types.ts";
 import { useCurrentUser } from "@/features/auth/hooks/useCurrentUser.ts";
 import UserEditDialog from "@/features/users/components/UserEditDialog.tsx";
 import Link from "@/features/shared/components/ui/Link.tsx";
+import { UserFollowButton } from "@/features/users/components/UserFollowButton.tsx";
 
 export const Route = createFileRoute("/users/$userId/")({
   component: UserPage,
@@ -152,5 +153,7 @@ function UserProfileButton({ user }: UserProfileButtonProps) {
     return <UserEditDialog user={user} />;
   }
 
-  return null;
+  return (
+    <UserFollowButton targetUserId={user.id} isFollowing={user.isFollowing} />
+  );
 }

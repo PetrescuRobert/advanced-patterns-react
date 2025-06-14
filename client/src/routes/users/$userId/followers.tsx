@@ -3,6 +3,7 @@ import { UserList } from "@/features/users/components/UserList";
 import { isTRPCClientError, trpc } from "@/router";
 import { createFileRoute, notFound } from "@tanstack/react-router";
 import { z } from "zod";
+import { UserFollowButton } from "@/features/users/components/UserFollowButton.tsx";
 
 export const Route = createFileRoute("/users/$userId/followers")({
   component: UserFollowersPage,
@@ -47,6 +48,12 @@ function UserFollowersPage() {
         <UserList
           users={pages.flatMap((page) => page.items)}
           isLoading={followersQuery.isFetchingNextPage}
+          rightComponent={(user) => (
+            <UserFollowButton
+              targetUserId={user.id}
+              isFollowing={user.isFollowing}
+            />
+          )}
         />
       </InfiniteScroll>
     </main>

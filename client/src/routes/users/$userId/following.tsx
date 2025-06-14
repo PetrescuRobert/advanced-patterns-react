@@ -3,6 +3,7 @@ import { z } from "zod";
 import { isTRPCClientError, trpc } from "@/router.tsx";
 import { InfiniteScroll } from "@/features/shared/components/InfiniteScroll.tsx";
 import { UserList } from "@/features/users/components/UserList.tsx";
+import { UserFollowButton } from "@/features/users/components/UserFollowButton.tsx";
 
 export const Route = createFileRoute("/users/$userId/following")({
   component: UserFollowingPage,
@@ -47,6 +48,12 @@ function UserFollowingPage() {
         <UserList
           users={pages.flatMap((page) => page.items)}
           isLoading={followingQuery.isFetchingNextPage}
+          rightComponent={(user) => (
+            <UserFollowButton
+              targetUserId={user.id}
+              isFollowing={user.isFollowing}
+            />
+          )}
         />
       </InfiniteScroll>
     </main>
