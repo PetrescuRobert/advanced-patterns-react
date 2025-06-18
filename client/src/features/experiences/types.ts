@@ -1,4 +1,4 @@
-import { Experience, User } from "@advanced-react/server/database/schema";
+import { Experience, Tag, User } from "@advanced-react/server/database/schema";
 
 type ExperienceWithUser = Experience & { user: User };
 
@@ -15,15 +15,21 @@ type ExperienceWithFavoritesCount = Experience & { favoritesCount: number };
 
 type ExperienceWithCommentsCount = Experience & { commentsCount: number };
 
+type ExperienceWithTags = Experience & {
+  tags: Tag[];
+};
+
 export type ExperienceForList = ExperienceWithUser &
   ExperienceWithUserContext &
   ExperienceWithCommentsCount &
   ExperienceWithAttendeesCount &
-  ExperienceWithFavoritesCount;
+  ExperienceWithFavoritesCount &
+  ExperienceWithTags;
 
 export type ExperienceForDetails = ExperienceWithUser &
   ExperienceWithUserContext &
   ExperienceWithCommentsCount &
   ExperienceWithAttendees &
   ExperienceWithAttendeesCount &
-  ExperienceWithFavoritesCount;
+  ExperienceWithFavoritesCount &
+  ExperienceWithTags;

@@ -8,6 +8,7 @@ import { useCurrentUser } from "@/features/auth/hooks/useCurrentUser.ts";
 import { ExperienceDeleteDialog } from "@/features/experiences/components/ExperienceDeleteDialog.tsx";
 import { ExperienceAttendButton } from "./ExperienceAttendButton";
 import { ExperienceFavoriteButton } from "@/features/experiences/components/ExperienceFavoriteButton.tsx";
+import TagList from "@/features/tags/components/TagList.tsx";
 
 type ExperienceCardProps = {
   experience: ExperienceForList;
@@ -22,6 +23,7 @@ export function ExperienceCard({ experience }: ExperienceCardProps) {
         <div className={"w-full space-y-4"}>
           <ExperienceCardHeader experience={experience} />
           <ExperienceCardContent experience={experience} />
+          <ExperienceCardTags experience={experience} />
           <ExperienceCardMeta experience={experience} />
           <ExperienceCardMetricButtons experience={experience} />
           <ExperienceCardActionButtons experience={experience} />
@@ -116,6 +118,12 @@ function ExperienceCardMeta({ experience }: ExperienceCardMetaProps) {
       )}
     </div>
   );
+}
+
+type ExperienceCardTagsProps = Pick<ExperienceCardProps, "experience">;
+
+function ExperienceCardTags({ experience }: ExperienceCardTagsProps) {
+  return <TagList tags={experience.tags} />;
 }
 
 type ExperienceCardMetricButtonsProps = Pick<ExperienceCardProps, "experience">;

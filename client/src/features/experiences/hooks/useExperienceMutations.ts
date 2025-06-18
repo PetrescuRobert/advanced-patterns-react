@@ -23,6 +23,7 @@ export function useExperienceMutations(
 
   const { userId: pathUserId } = useParams({ strict: false });
   const { q: pathQ } = useSearch({ strict: false });
+  const { tagId: pathTagId } = useParams({ strict: false });
 
   const editMutation = trpc.experiences.edit.useMutation({
     onSuccess: async ({ id }) => {
@@ -55,6 +56,9 @@ export function useExperienceMutations(
           ? utils.experiences.search.invalidate({ q: pathQ })
           : Promise.resolve(),
         utils.experiences.favorites.invalidate(),
+        pathTagId
+          ? utils.experiences.byTagId.invalidate({ id: pathTagId })
+          : Promise.resolve(),
       ]);
       toast({
         title: "Experience deleted successfully!",
@@ -97,6 +101,9 @@ export function useExperienceMutations(
         pathQ
           ? utils.experiences.search.cancel({ q: pathQ })
           : Promise.resolve(),
+        pathTagId
+          ? utils.experiences.byTagId.cancel({ id: pathTagId })
+          : undefined,
       ]);
 
       const previousData = {
@@ -107,6 +114,9 @@ export function useExperienceMutations(
           : undefined,
         search: pathQ
           ? utils.experiences.search.getInfiniteData({ q: pathQ })
+          : undefined,
+        byTagId: pathTagId
+          ? utils.experiences.byTagId.getInfiniteData({ id: pathTagId })
           : undefined,
       };
 
@@ -178,6 +188,29 @@ export function useExperienceMutations(
         });
       }
 
+      if (pathTagId) {
+        utils.experiences.byTagId.setInfiniteData(
+          { id: pathTagId },
+          (oldData) => {
+            if (!oldData) {
+              return;
+            }
+
+            return {
+              ...oldData,
+              pages: oldData.pages.map((page) => ({
+                ...page,
+                experiences: page.experiences.map((experience) =>
+                  experience.id === id
+                    ? updateExperience(experience)
+                    : experience,
+                ),
+              })),
+            };
+          },
+        );
+      }
+
       return { previousData };
     },
     onError: (error, { id }, context) => {
@@ -199,6 +232,14 @@ export function useExperienceMutations(
         utils.experiences.search.setInfiniteData(
           { q: pathQ },
           context?.previousData.search,
+        );
+      }
+
+      if (pathTagId) {
+        // Revert search results data to its previous state
+        utils.experiences.byTagId.setInfiniteData(
+          { id: pathTagId },
+          context?.previousData.byTagId,
         );
       }
 

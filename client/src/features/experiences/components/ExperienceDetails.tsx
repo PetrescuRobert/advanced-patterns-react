@@ -9,6 +9,7 @@ import { ExperienceDeleteDialog } from "@/features/experiences/components/Experi
 import { ExperienceAttendButton } from "./ExperienceAttendButton";
 import { UserAvatarList } from "@/features/users/components/UserAvatarList.tsx";
 import { ExperienceFavoriteButton } from "@/features/experiences/components/ExperienceFavoriteButton.tsx";
+import TagList from "@/features/tags/components/TagList.tsx";
 
 type ExperienceDetailsProps = {
   experience: ExperienceForDetails;
@@ -20,10 +21,13 @@ export function ExperienceDetails({ experience }: ExperienceDetailsProps) {
       <ExperienceDetailsMedia experience={experience} />
       <div className="space-y-4 p-4">
         <ExperienceDetailsContent experience={experience} />
+        <ExperienceDetailsTags experience={experience} />
         <ExperienceDetailsMeta experience={experience} />
         <ExperienceCardActionButtons experience={experience} />
         <div
-          className={"dark: border-t-2 border-neutral-200 border-neutral-800"}
+          className={
+            "border-neutral-200 dark:border-t-2 dark:border-neutral-800"
+          }
         >
           <ExperienceDetailsAttedees experience={experience} />
         </div>
@@ -60,6 +64,12 @@ function ExperienceDetailsContent({
       {experience.content}
     </p>
   );
+}
+
+type ExperienceDetailsTagsProps = Pick<ExperienceDetailsProps, "experience">;
+
+function ExperienceDetailsTags({ experience }: ExperienceDetailsTagsProps) {
+  return <TagList tags={experience.tags} />;
 }
 
 type ExperienceDetailsMetaProps = Pick<ExperienceDetailsProps, "experience">;
